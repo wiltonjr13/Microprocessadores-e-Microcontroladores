@@ -1,0 +1,149 @@
+﻿Respostas aula 3
+
+
+
+
+1.Dada uma variável a do tipo char (um byte), escreva os trechos de código em C para:
+
+
+(a) Somente setar o bit menos significativo de a.
+
+
+   a |= 0x01;
+
+
+(b) Somente setar dois bits de a: o menos significativo e o segundo menos significativo.
+
+
+   a|= 0x03;
+
+
+(c) Somente zerar o terceiro bit menos significativo de a.
+
+
+   a &= 0xFB; 
+
+
+(d) Somente zerar o terceiro e o quarto bits menos significativo de a.
+
+
+   a &= 0xF3
+
+
+(e) Somente inverter o bit mais significativo de a.
+
+
+   a^= 0x80;
+
+
+(f) Inverter o nibble mais significativo de a, e setar o nibble menos significativo de a.
+
+
+   a |= 0x0f;
+   a ^= 0xF0;
+
+
+
+
+2. Considerando a placa Launchpad do MSP430, escreva o código em C para piscar os dois LEDs ininterruptamente.
+
+
+#include <msp430g2553.h>
+#define LED1 BIT0
+#define LED2 BIT6
+
+
+    void main (){
+
+
+        WDTCTL = WDTPW|WDTHOLD;
+        P1OUT = 0;
+        P1DIR = LED1 + LED2;
+        
+        for (;;){
+            P1OUT ^= (LED1 + LED2);     
+            __delay_cycles(100000);
+        }
+    }
+
+
+
+
+3. Considerando a placa Launchpad do MSP430, escreva o código em C para piscar duas vezes os dois LEDs sempre que o usuário pressionar o botão.  
+
+
+#include <msp430g2553.h>
+#define BTN BIT2
+#define LED1 BIT0
+#define LED2 BIT6
+
+
+void main(void){
+volatile int i;
+         WDTCTL = WDTPW | WDTHOLD;
+         P1DIR = LED1 + LED2;
+         P1OUT = 0x00;
+         
+for(;;)
+         {
+                 if(P1IN == 0x04){
+                  for (i = 0; i < 0x1000; i++);
+                 P1OUT = 0x41;
+                 for (i = 0; i < 0x1000; i++);
+                  P1OUT = 0x00;
+                 for (i = 0; i < 0x1000; i++);
+                  P1OUT = 0x41;
+                 for (i = 0; i < 0x1000; i++);
+                   P1OUT = 0x00;
+                 for (i = 0; i < 0x1000; i++);
+}
+         }
+}
+
+
+
+
+4. Considerando a placa Launchpad do MSP430, faça uma função em C que pisca os dois LEDs uma vez.
+
+
+void pisca(void){
+volatile int i;
+          for (i = 0; i < 0x1000; i++);
+         P1OUT = 0x41;
+         for (i = 0; i < 0x1000; i++);
+          P1OUT = 0x00;
+}
+
+
+
+
+
+
+5. Reescreva o código da questão 2 usando a função da questão 4.
+
+
+#include <msp430g2553.h>
+
+
+void pisca(void){
+volatile int i;
+for (i = 0; i < 0x1000; i++);
+         P1OUT = 0x41;
+         for (i = 0; i < 0x1000; i++);
+          P1OUT = 0x00;
+}
+
+
+int main(void) {
+volatile int i;
+ 
+          WDTCTL = WDTPW | WDTHOLD;
+          P1DIR =  BIT6 + BIT0;
+          P1OUT =  BIT6 + BIT0;
+   
+          for (;;) {
+
+
+            pisca();
+          }
+  }
